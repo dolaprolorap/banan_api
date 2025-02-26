@@ -1,4 +1,4 @@
-instance
+prod.db
 venv
 .idea
 __pycache__

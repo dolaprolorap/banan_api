@@ -6,7 +6,7 @@ pip install -r requirenments.txt
 
 Для запуска приложения выполнить:
 ```
-flass --app main run
+flask --app main run
 ```
 
 ## Эндпоинты
