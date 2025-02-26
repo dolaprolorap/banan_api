@@ -56,9 +56,23 @@ def update_session():
 
     with sqlite3.connect(DB_PATH) as conn:
         cursor = conn.cursor()
+        session_data = cursor.execute('''
+            SELECT * FROM sessions WHERE public_id = ?
+        ''', [public_id]).fetchone()
+
+        if session_data is None:
+            return {'success': False, 'msg': 'No session with current public_id'}
+
+        _, _, current_steps, current_finished_status = session_data
+
+        if current_finished_status == 1:
+            return {'success': False, 'msg': 'Session already finished'}
+
+        new_steps, new_finished_status = current_steps + steps, is_finished
+
         cursor.execute('''
             UPDATE sessions SET steps = ?, is_finished = ? WHERE public_id = ?
-        ''', (steps, is_finished, public_id))
+        ''', (new_steps, new_finished_status, public_id))
         conn.commit()
 
     return {'success': True, 'data': {}}
