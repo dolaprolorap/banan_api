@@ -7,7 +7,7 @@ from utils import session_utils
 
 app = Flask(__name__)
 DB_PATH = "prod.db"
-CORS(app, origins=["185.103.255.32"])
+CORS(app, origins=["http://185.103.255.32"])
 
 
 def init_db():
