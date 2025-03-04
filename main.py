@@ -114,7 +114,10 @@ def get_data():
             SELECT * FROM sessions
         ''').fetchall()
 
-        steps_data = [[steps, is_finished] for _, _, steps, is_finished, _ in sessions_data]
+        steps_data = [
+            {'score': steps, 'isSolved': True if is_finished else False}
+            for _, _, steps, is_finished, _ in sessions_data
+        ]
 
         return {'success': True, 'data': steps_data}
 
