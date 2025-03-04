@@ -1,13 +1,16 @@
 import sqlite3
 import time
+import os
 from flask import Flask, request
 from flask_cors import CORS
 from datetime import datetime, timedelta
 from utils import session_utils
+from dotenv import load_dotenv
 
 app = Flask(__name__)
 DB_PATH = "prod.db"
 CORS(app, origins=["http://185.103.255.32"])
+load_dotenv()
 
 
 def init_db():
@@ -93,5 +96,28 @@ def update_session():
     return {'success': True, 'data': {}}
 
 
+@app.route('/get-data', methods=['POST'])
+def get_data():
+    password = request.get_json(force=True)['password']
+
+    data_getter_password = os.getenv('DATA_GETTER_PASSWORD')
+
+    if data_getter_password is None:
+        return {'success': False, 'msg': 'Environment variable for password must be set'}
+
+    if password != data_getter_password:
+        return {'success': False, 'msg': 'Invalid password'}
+
+    with sqlite3.connect(DB_PATH) as conn:
+        cursor = conn.cursor()
+        sessions_data = cursor.execute('''
+            SELECT * FROM sessions
+        ''').fetchall()
+
+        steps_data = [[steps, is_finished] for _, _, steps, is_finished, _ in sessions_data]
+
+        return {'success': True, 'data': steps_data}
+
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)

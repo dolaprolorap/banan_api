@@ -2,3 +2,4 @@ prod.db
 venv
 .idea
 __pycache__
+.env
