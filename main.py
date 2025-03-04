@@ -1,16 +1,16 @@
 import sqlite3
 import time
-import os
 from flask import Flask, request
 from flask_cors import CORS
 from datetime import datetime, timedelta
 from utils import session_utils
-from dotenv import load_dotenv
+from dotenv import dotenv_values
 
 app = Flask(__name__)
 DB_PATH = "prod.db"
 CORS(app, origins=["http://185.103.255.32"])
-load_dotenv()
+
+config = dotenv_values(".env")
 
 
 def init_db():
@@ -100,7 +100,7 @@ def update_session():
 def get_data():
     password = request.get_json(force=True)['password']
 
-    data_getter_password = os.getenv('DATA_GETTER_PASSWORD')
+    data_getter_password = config.get('DATA_GETTER_PASSWORD', None)
 
     if data_getter_password is None:
         return {'success': False, 'msg': 'Environment variable for password must be set'}
